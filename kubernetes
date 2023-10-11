@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pythonwebapp
+  labels:
+    app: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      name: server-pod
+      labels:
+        app: web
+
+    spec:
+      containers:
+        - name: pythonwebapp
+          image: balup/pythonapp:v4
+          ports:
+            - containerPort: 5050
+              hostPort: 5050
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pythonweb-service
+  labels:
+    app: web
+spec:
+  type: NodePort
+  ports:
+    - targetPort: 5050
+      port: 5050
+      nodePort: 30023
+  selector:
+    app: web
